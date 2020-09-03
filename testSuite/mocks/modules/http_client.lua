@@ -4,3 +4,7 @@ local function query(url,res)
     end
     return 1
 end
+
+return {
+    query = query
+}

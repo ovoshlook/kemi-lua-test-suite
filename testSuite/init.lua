@@ -194,8 +194,9 @@ function test(testName,testScenario)
     local checkRes,testRes = scenarios[testScenario.algorithm](testScenario)
     
     if Logging then
-        print(colors("%{bright blue}--------------------------------------------------------\n"))
+        print(colors("%{bright blue}--------------------------------------------------------"))
     end
+    print()
 
     for i=1,#mocked do
         local key = mocked[i].key 
@@ -223,7 +224,7 @@ local function run(modules)
     end
 
     local tests = require("tests.init")
-    print("\n")
+    print()
     local results = callTest(tests,{
         total = 0,
         passed = 0,

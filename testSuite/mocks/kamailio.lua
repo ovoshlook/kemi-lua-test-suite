@@ -191,7 +191,8 @@ local function init(testData,mocks)
         sqlops      = sqlops,
         xhttp       = xhttp,
         registrar   = require "testSuite.mocks.modules.registrar",
-        tcpops      = require "testSuite.mocks.modules.tcpops"
+        tcpops      = require "testSuite.mocks.modules.tcpops",
+        http_client = require "testSuite.mocks.modules.http_client"
     }
 
     --  <= 4.4
