@@ -33,10 +33,10 @@ The simplest way to run it
 ```bash
 export KAMAILIO_TESTSUITE_LUA=1 && lua file.lua
 ```
-but it is better to be switched off after tests. Otherwise when kamailio will be started it will run testSuite during runtime.
+but it is better for this env variable to be switched off after tests otherwise when kamailio will be started it will run testSuite during runtime.
 The best option is to run tests in the docker container.
 
-There is a `docker` folder with an example of the docker container that can be used to run tests
+`docker` folder with an example of the docker container that can be used to run tests is in the docker directory
 
 ## Tests description
 ```lua
