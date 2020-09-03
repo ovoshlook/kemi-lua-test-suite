@@ -44,9 +44,9 @@ return {
     mySuperTest = {
         description = "Test mymymodule",            -- Description of the test.                                 REQUIRED
         testedFunction = kamailio.mymodule.func,    -- Function being tested. kamailio is a global              REQUIRED
-                                                    -- var where mincluded modules will be pointed
-                                                    -- functions like like ksr_requrest_route has 
-                                                    -- to be called directly.
+                                                    -- var where included modules will be pointed
+                                                    -- functions like ksr_requrest_route has to be 
+                                                    -- called directly.
         expectedResult = "a",                       -- Expected result of tested function
         resultContainer = { "$avp", "result" },     -- If function puts some value into the vp result 
                                                     -- container describes for testSuite where to find 
@@ -78,7 +78,7 @@ return {
 }
 ```
 ## Startup keys
-`--stop-on-fail` will stop whole testsuite
+`--stop-on-fail` will stop whole testsuite if one of the tests fails
 
 ## Management
 there are some extensions that can be used for manage some test things:
