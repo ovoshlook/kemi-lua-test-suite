@@ -43,7 +43,10 @@ There is a `docker` folder with an example of the docker container that can be u
 return {
     mySuperTest = {
         description = "Test mymymodule",            -- Description of the test.                                 REQUIRED
-        testedFunction = kamailio.mymodule,         -- Function being tested.                                   REQUIRED
+        testedFunction = kamailio.mymodule.func,    -- Function being tested. kamailio is a global              REQUIRED
+                                                    -- var where mincluded modules will be pointed
+                                                    -- functions like like ksr_requrest_route has 
+                                                    -- to be called directly.
         expectedResult = "a",                       -- Expected result of tested function
         resultContainer = { "$avp", "result" },     -- If function puts some value into the vp result 
                                                     -- container describes for testSuite where to find 
