@@ -1,14 +1,15 @@
 package = "kemi-test-suite"
 version = "0.1"
 source = {
-   url = "git+https://github.com/ovoshlook/kemi-lua-test-suite.git"
+   url = "git+https://github.com/ovoshlook/kemi-lua-test-suite.git",
+   tag = "v0.1"
 }
 description = {
    homepage = "https://github.com/ovoshlook/kemi-lua-test-suite",
    license = "MIT"
 }
 dependencies = {
-  "lua ~> 5.1"
+  "lua ~> 5.1",
   "lua-cjson ~> 2.1"
 }
 build = {
