@@ -5,6 +5,7 @@ local json = require "cjson.safe"
 -- "testData" param used to get test predefined vaules, if no predefined - default vaules will be used
 
 local internalLogging = false
+local pathToModules = "kemi-test-suite.mocks.modules."
 
 local function init(testData,mocks)
     
@@ -172,27 +173,27 @@ local function init(testData,mocks)
         isdsturiset = isdsturiset,
         forward     = forward,
         x           = x,
-        pv          = require "testSuite.mocks.modules.pv",
+        pv          = require (pathToModules.."pv"),
         maxfwd      = maxfwd,
         sanity      = sanity,
         siputils    = siputils,
         isdsturiset = isdsturiset,
         dialplan    = dialplan,
-        permissions = require "testSuite.mocks.modules.permissions",
-        jsonrpcs    = require "testSuite.mocks.modules.jsonrpcs",
-        nathelper   = require "testSuite.mocks.modules.nathelper",
+        permissions = require (pathToModules.."permissions"),
+        jsonrpcs    = require (pathToModules.."jsonrpcs"),
+        nathelper   = require (pathToModules.."nathelper"),
         statsd      = statsd,
-        hdr         = require "testSuite.mocks.modules.hdr",
+        hdr         = require (pathToModules.."hdr"),
         sl          = sl,
         sdpops      = sdpops,
-        rtpengine   = require "testSuite.mocks.modules.rtpengine",
+        rtpengine   = require (pathToModules.."rtpengine"),
         textops     = textops,
         textopsx    = textopsx,
         sqlops      = sqlops,
         xhttp       = xhttp,
-        registrar   = require "testSuite.mocks.modules.registrar",
-        tcpops      = require "testSuite.mocks.modules.tcpops",
-        http_client = require "testSuite.mocks.modules.http_client"
+        registrar   = require (pathToModules.."registrar"),
+        tcpops      = require (pathToModules.."tcpops"),
+        http_client = require (pathToModules.."http_client")
     }
 
     --  <= 4.4
