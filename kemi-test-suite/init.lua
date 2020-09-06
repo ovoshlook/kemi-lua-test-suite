@@ -6,10 +6,10 @@ for i=1,#arg do
     end
 end
 
-local colors = require "testSuite.colors"
+local colors = require "kemi-test-suite.colors"
 local json = require "cjson.safe"
 -- local s = require("say")
-local testMock = require('testSuite.mocks.kamailio')
+local testMock = require('kemi-test-suite.mocks.kamailio')
 
 local testAlgorithms = {
     same        = "same",

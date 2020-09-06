@@ -1,6 +1,6 @@
 --// Just an example how to make functions from config tesTable
 
-local testSuite = require "testSuite.init"
+local testSuite = require "test-suite.init"
 local mymodule = require "mymodule"
 
 function ksr_request_route () 
