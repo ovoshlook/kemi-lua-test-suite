@@ -5,8 +5,12 @@ source = {
    tag = "v0.1"
 }
 description = {
-   homepage = "https://github.com/ovoshlook/kemi-lua-test-suite",
-   license = "MIT"
+    summary = "test suite for the kamailio KEMI Lua engine ",
+    detailed = [[
+        test suite for the kamailio KEMI Lua engine. End2End tests emulation & unit testing.
+    ]],
+    homepage = "https://github.com/ovoshlook/kemi-lua-test-suite",
+    license = "MIT/X11"
 }
 dependencies = {
   "lua ~> 5.1",
