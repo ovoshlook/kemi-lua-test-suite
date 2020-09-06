@@ -17,5 +17,7 @@ dependencies = {
   "lua-cjson ~> 2.1"
 }
 build = {
-    type = "builtin"
+    type = "builtin",
+    type = "command",
+    install_command = "cp -r test-suite /usr/local/share/lua/5.1/kemi-test-suite"
 }
