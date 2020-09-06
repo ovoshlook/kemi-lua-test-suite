@@ -7,7 +7,7 @@ source = {
 description = {
     summary = "test suite for the kamailio KEMI Lua engine ",
     detailed = [[
-        test suite for the kamailio KEMI Lua engine. End2End tests emulation & unit testing.
+test suite for the kamailio KEMI Lua engine. End2End tests emulation & unit testing.
     ]],
     homepage = "https://github.com/ovoshlook/kemi-lua-test-suite",
     license = "MIT/X11"
