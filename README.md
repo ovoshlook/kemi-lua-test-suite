@@ -4,17 +4,15 @@
 ## How it works
 There is no supermagic: It simply runs scripts defined in testSuite
 
-## Initialiaztion
-It is simple to use:
+## Usage
 
-- clone it from git and near `*.lua` file which defined in
-`modparam("app_lua","load","/path/to/main/example-kamailio.lua")`
+- `loarocks install kemi-test-suite`
 
 - Describe tests at the `tests` directory [description delow].
 
 - init in the `file.lua`
 ```lua
-local testSuite = require "testSuite.init"
+local testSuite = require "kemi-test-suite.init"
 local mymodule = require "mymodule"
 ```
 - call `run()` function

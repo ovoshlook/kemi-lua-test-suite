@@ -19,5 +19,5 @@ dependencies = {
 build = {
     type = "builtin",
     type = "command",
-    install_command = "cp -r test-suite /usr/local/share/lua/5.1/kemi-test-suite"
+    install_command = "cp -r kemi-test-suite /usr/local/share/lua/5.1/kemi-test-suite"
 }
