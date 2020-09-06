@@ -208,12 +208,12 @@ local function init(testData,mocks)
         isdsturiset = isdsturiset,
         forward     = forward,
         x           = x,
-        pv          = require "testSuite.mocks.modules.pv",
+        pv          = require (pathToModules.."pv"),
         maxfwd      = maxfwd,
         sanity      = sanity,
         siputils    = siputils,
         isdsturiset = isdsturiset,
-        registrar    = require "testSuite.mocks.modules.registrar"
+        registrar    = require (pathToModules.."registrar")
     }
     
     return internalLogging
