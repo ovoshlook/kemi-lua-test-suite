@@ -23,6 +23,13 @@ local mymodule = require "mymodule"
 ]]
 testSuite.run({ mymodule = mymodule })
 ```
+- also it is possible to call functions from separated modules in a classical way via `require` for each test
+```lua
+testMySuperFunc = {
+    description = "runs my super function",
+    testedFunction = require ("myModule").mySuperFunc
+}
+```
 
 ## Usage
 The main trigger which says to call testSuite or not is an environment variable `KAMAILIO_TESTSUITE_LUA`
@@ -41,10 +48,10 @@ The best option is to run tests in the docker container.
 return {
     mySuperTest = {
         description = "Test mymymodule",            -- Description of the test.                                 REQUIRED
-        testedFunction = kamailio.mymodule.func,    -- Function being tested. kamailio is a global              REQUIRED
-                                                    -- var where included modules will be pointed
-                                                    -- functions like ksr_requrest_route has to be 
-                                                    -- called directly.
+        testedFunction = kamailio.mymodule.func,    -- Function being tested. kamailio here is a global         REQUIRED
+                                                    -- var which contains modules werepassed into run()
+                                                    -- or just call global function like ksr_requrest_route 
+                                                    -- has to be called directly.
         expectedResult = "a",                       -- Expected result of tested function
         resultContainer = { "$avp", "result" },     -- If function puts some value into the vp result 
                                                     -- container describes for testSuite where to find 
