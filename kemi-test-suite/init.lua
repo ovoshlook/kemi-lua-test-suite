@@ -113,7 +113,7 @@ function beautify(this)
     elseif type(this) == "table" then
         return '"table: '..json.encode(this)..'"'
     end
-    return '"'..this..'"'
+    return '"'..tostring(this)..'"'
 end
 
 function callTest(testContainer,results)
