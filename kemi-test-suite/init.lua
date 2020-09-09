@@ -70,15 +70,14 @@ local function defineMocs(mocks)
         if key == "_G" then
             if not _G[module] then
                 print(colors("%{bright yellow}No \""..key.."."..module.."."..target.."\" found. Creating it insead of mocking.."))
-                if _G[module] then
-                    package.loaded[module][target] = mocks[i].to
-                else 
-                    package.loaded[module] = {
-                        [target] = mocks[i].to
-                    }
-                end
+                package.loaded[module] = {
+                    [target] = mocks[i].to
+                }
                 table.insert(mocked,{key = key, module = module, target = target })
             else  
+                if _G[module] then
+                    package.loaded[module][target] = mocks[i].to
+                end
                 table.insert(mocked,{key = key, module = module, target = target, func = _G[module][target] })
             end
 
