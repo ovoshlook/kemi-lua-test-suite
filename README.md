@@ -18,16 +18,15 @@ local mymodule = require "mymodule"
 - call `run()` function
 ```lua
 ...
---[[
-    this function can receive 1 parameter: it is a table of modules that was described as local modules but contain functions that also has to be tested
-]]
-testSuite.run({ mymodule = mymodule })
+
+testSuite.run()
 ```
-- also it is possible to call functions from separated modules in a classical way via `require` for each test
+- also it is possible to call functions directly from the modules
 ```lua
 testMySuperFunc = {
     description = "runs my super function",
-    testedFunction = require ("myModule").mySuperFunc
+    testedModule = "path/myPerfectModule.lua", --this path can be relative. the root path is a path where your main lua file exist: the one included in modparam("app_lua","load","/path/to/main/file.lua")
+    testedFunction = "mySuperFunc"
 }
 ```
 
@@ -48,10 +47,10 @@ The best option is to run tests in the docker container.
 return {
     mySuperTest = {
         description = "Test mymymodule",            -- Description of the test.                                 REQUIRED
-        testedFunction = kamailio.mymodule.func,    -- Function being tested. kamailio here is a global         REQUIRED
-                                                    -- var which contains modules werepassed into run()
-                                                    -- or just call global function like ksr_requrest_route 
-                                                    -- has to be called directly.
+        testedModule = "mymodule.lua"               -- Path to of the module contains testedFunction
+        testedFunction = "func",                    -- Function being tested. kamailio here is a global         REQUIRED
+                                                    -- if function is global like ksr_requrest_route 
+                                                    -- no testedModule param needed.
         expectedResult = "a",                       -- Expected result of tested function
         resultContainer = { "$avp", "result" },     -- If function puts some value into the vp result 
                                                     -- container describes for testSuite where to find 

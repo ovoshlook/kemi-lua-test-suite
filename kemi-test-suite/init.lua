@@ -38,11 +38,94 @@ testSuite.init("tests.init",
     }
 )
 ]]
-local function printTable(t) 
+
+function splitStr (inputstr, sep)
+    if sep == nil then
+            sep = "%s"
+    end
+    local t={}
+    for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
+            table.insert(t, str)
+    end
+    return t
+end
+
+function printTable(t) 
     for k,v in pairs(t) do
         print("key: "..k.." value: "..tostring(v))
         if type(v)=="table" then printTable(v) end
     end
+end
+
+local function defineMocs(mocks)
+  
+    if not mocks then return nil end
+    local mocked = {}
+    for i=1,#mocks do
+       
+        local key = mocks[i].what[1] 
+        local module = mocks[i].what[2]
+        local target = mocks[i].what[3]
+
+        if key == "_G" then
+            if not _G[module] then
+                print(colors("%{bright yellow}No \""..key.."."..module.."."..target.."\" found. Creating it insead of mocking.."))
+                package.loaded[module] = {
+                    [target] = mocks[i].to
+                }
+                table.insert(mocked,{key = key, module = module, target = target })
+            else  
+                if _G[module] then
+                    package.loaded[module][target] = mocks[i].to
+                end
+                table.insert(mocked,{key = key, module = module, target = target, func = _G[module][target] })
+            end
+
+        else
+            if not _G[key] or not _G[key][module] then
+
+                print(colors("%{bright yellow}No \""..key.."."..module.."."..target.."\" found. Creating it insead of mocking.."))
+                if _G[key] then
+                    _G[key][module]={}
+                else 
+                    _G[key] = {
+                        [module]={}
+                    }
+                end
+                table.insert(mocked,{key = key, module = module, target = target })
+            else  
+                table.insert(mocked,{key = key, module = module, target = target, func = _G[key][module][target] })
+            end
+            _G[key][module][target] = mocks[i].to
+        end
+    end
+
+    return mocked
+
+end
+
+local function undefineMocs(mocked)
+    if not mocked then return end
+    for i=1,#mocked do
+        local key = mocked[i].key 
+        local module = mocked[i].module
+        local target = mocked[i].target
+        if key == "_G" then
+            package.loaded[module] = nil
+        else
+            _G[key][module][target] = mocked[i].func
+        end
+    end
+end
+
+local function testedFunctionInit(testedModule,testedFunction)
+    if not testedModule then
+        return _G[testedFunction]
+    elseif not package.loaded[testedModule] then
+        local m = loadfile(testedModule)
+        return m()[testedFunction]
+    end
+    return package.loaded[testedModule][testedFunction]
 end
 
 local scenarios = {
@@ -61,11 +144,9 @@ local scenarios = {
             return false,res
         else
             local res = testScenario.testedFunction( unpack(testScenario.testedFunctionArgs) )
-
             if not res and type(testScenario.expectedResult) == "table" then
                 res = {}
             end
-
             if (json.encode(testScenario.expectedResult) == json.encode(res)) then
                 return true,res
             end
@@ -106,8 +187,10 @@ local scenarios = {
 }
 
 function beautify(this)
-    if not this then
+    if this == nil then
         return "nil"
+    elseif this == false then
+        return "false"
     elseif type(this) == "function" then
         return "function" 
     elseif type(this) == "table" then
@@ -117,7 +200,6 @@ function beautify(this)
 end
 
 function callTest(testContainer,results)
-
     for k in pairs(testContainer) do
         if not testContainer[k] then
             print(colors("%{bright red}\nCan't find test configured in tests%{reset} for \""..k.."\"]\n"))
@@ -164,54 +246,27 @@ function test(testName,testScenario)
 
     Logging = testMock.init(params)
 
-    local mocked = {}
-    if mocks then       
-        for i=1,#mocks do
-            local key = mocks[i].what[1] 
-            local module = mocks[i].what[2]
-            local target = mocks[i].what[3]
-            if not _G[key] or not _G[key][module] then
-                print(colors("%{bright yellow}No \""..key.."."..module.."."..target.."\" found. Creating it insead of mocking.."))
-                if _G[key] then
-                    _G[key][module]={}
-                else 
-                    _G[key] = {
-                        [module]={}
-                    }
-                end
-            else    
-                table.insert(mocked,{key = key, module = module, target = target, func = _G[key][module][target] })
-            end
-            _G[key][module][target] = mocks[i].to
-        end
-    end
+    local mocked = defineMocs(mocks)
 
     if Logging then
         print(colors("%{bright white}Test %{bright blue}\""..testName.."\" %{bright white}output:"))
         print(colors("%{bright blue}-------------------------------------------------------- "))
     end
 
+    testScenario.testedFunction = testedFunctionInit(testScenario.testedModule,testScenario.testedFunction)
     local checkRes,testRes = scenarios[testScenario.algorithm](testScenario)
-    
     if Logging then
         print(colors("%{bright blue}--------------------------------------------------------"))
     end
     print()
 
-    for i=1,#mocked do
-        local key = mocked[i].key 
-        local module = mocked[i].module
-        local target = mocked[i].target
-        _G[key][module][target] = mocked[i].func
-    end
+    undefineMocs(mocked)
 
     return checkRes,testRes
 
 end
 
-
-
-local function run(modules)
+local function run()
     
     if not os.getenv("KAMAILIO_TESTSUITE_LUA") then 
         return
@@ -219,12 +274,7 @@ local function run(modules)
     
     testMock.init({})
 
-    if modules and type(modules) == "table" then
-        kamailio = modules
-    end
-
     local tests = require("tests.init")
-    print()
     local results = callTest(tests,{
         total = 0,
         passed = 0,

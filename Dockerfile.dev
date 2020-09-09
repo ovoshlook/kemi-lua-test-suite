@@ -1,0 +1,10 @@
+## test and run examples on master
+FROM debian:stable-slim
+ENV KAMAILIO_TESTSUITE_LUA=1
+RUN apt-get -y update
+RUN apt-get install -y lua5.1 luarocks git
+RUN luarocks install lua-cjson
+RUN luarocks install redis-lua
+COPY . .
+RUN mv ./kemi-test-suite ./examples
+WORKDIR /examples

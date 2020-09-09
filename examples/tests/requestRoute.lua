@@ -10,7 +10,7 @@ return {
 
     request_route_call_2 = {
         description = "test http_client response",
-        testedFunction = ksr_request_route,
+        testedFunction = "ksr_request_route",
         expectedResult = "test message",
         resultContainer = { "$avp", "body" },
         withParams = {
@@ -22,7 +22,7 @@ return {
                 what = { "KSR","http_client","query" },
                 to = function(url,res) 
                     KSR.pv.seti("$rc",200) 
-                    KSR.pv.sets(res,"test messag")
+                    KSR.pv.sets(res,"test message")
                 end
             }
         }
