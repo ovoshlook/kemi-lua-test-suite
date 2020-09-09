@@ -2,7 +2,7 @@ package = "kemi-test-suite"
 version = "0.2-0"
 source = {
    url = "git+https://github.com/ovoshlook/kemi-lua-test-suite.git",
-   branch = "mocks-improved"
+   branch = "v0.2"
 }
 description = {
     summary = "test suite for the kamailio KEMI Lua engine ",
