@@ -1,13 +1,5 @@
 return {
 
-    -- request_route_call = {
-    --     description = "just runs main route example",
-    --     testedFunction = ksr_request_route,
-    --     withParams = {
-    --         internalLogging = true
-    --     }
-    -- },
-
     request_route_call_2 = {
         description = "test http_client response",
         testedFunction = "ksr_request_route",

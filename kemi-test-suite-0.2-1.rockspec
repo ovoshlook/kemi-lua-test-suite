@@ -1,5 +1,5 @@
 package = "kemi-test-suite"
-version = "0.2-0"
+version = "0.2-1"
 source = {
    url = "git+https://github.com/ovoshlook/kemi-lua-test-suite.git",
    branch = "v0.2"
