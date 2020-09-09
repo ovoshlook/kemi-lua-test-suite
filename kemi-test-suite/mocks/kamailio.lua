@@ -60,6 +60,7 @@ local function init(testData,mocks)
 
     local maxfwd = {
         process_maxfwd = function(limit)
+            KAMAILIO_CRASH_CHECK(debug.getinfo(1),1,limit)
             local f = testData.forwards or 4
             if f > limit then
                 return -1
@@ -76,7 +77,8 @@ local function init(testData,mocks)
     }
 
     local textops = {
-        remove_hf_re = function(regularExpression)
+        remove_hf_re = function(regex)
+            KAMAILIO_CRASH_CHECK(debug.getinfo(1),1,regex)
             -- implement logic to remove header in headers array
             return
         end
@@ -90,7 +92,7 @@ local function init(testData,mocks)
 
     local dialplan = {
         dp_replace = function( tag,dataToReplace,varToPutNewData )
-
+            KAMAILIO_CRASH_CHECK(debug.getinfo(1),3,tag,dataToReplace,varToPutNewData)
             variables["$avp"]["s:dest"]  = testData.callDirection or "INBOUND"
             variables["$ru"] = testData.callDestination or "999999999@3.3.3.3:5070"
             variables["$avp"]["newDest"] = testData.callDestination  or "999999999@3.3.3.3:5070"
@@ -109,6 +111,7 @@ local function init(testData,mocks)
 
     local sl = {
         send_reply = function(code,reason)
+            KAMAILIO_CRASH_CHECK(debug.getinfo(1),2,code,reason)
             return
         end
     }
@@ -124,12 +127,14 @@ local function init(testData,mocks)
 
     local sqlops = {
         sql_xquery = function(conn,query,res)
+            KAMAILIO_CRASH_CHECK(debug.getinfo(1),3,conn,query,res)
             return
         end
     }
 
     local xhttp = {
         xhttp_reply = function (code, reason, type, data) 
+            KAMAILIO_CRASH_CHECK(debug.getinfo(1),4,code, reason, type, data)
             return
         end
     }
