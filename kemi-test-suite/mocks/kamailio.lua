@@ -146,7 +146,7 @@ local function init(testData,mocks)
     end
 
     --  >= 5.0
-    _G["KSR"] = {
+    package.loaded["KSR"] = {
         log         = printLog,
         info        = printLog,
         dbg         = printLog,
@@ -179,9 +179,9 @@ local function init(testData,mocks)
         tcpops      = require (pathToModules.."tcpops"),
         http_client = require (pathToModules.."http_client")
     }
-
+    _G["KSR"] = package.loaded["KSR"]
     --  <= 4.4
-    _G["sr"] = {
+    package.loaded["sr"] = {
         log         = printLog,
         info        = printLog,
         warn        = printLog,
@@ -199,6 +199,7 @@ local function init(testData,mocks)
         isdsturiset = isdsturiset,
         registrar    = require (pathToModules.."registrar")
     }
+    _G["sr"] = package.loaded["sr"]
     
     return internalLogging
 end

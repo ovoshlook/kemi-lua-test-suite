@@ -1,6 +1,6 @@
 return {
     redis_create_connection_failure = {
-        description = "connecton failure",
+        description = "emulates connecton failure",
         testedModule = "redisClient.lua",
         testedFunction = "getConn",
         expectedResult = false,
@@ -9,13 +9,18 @@ return {
         },
         mocks = {
             { 
-                what = {"_G","redis","connect"},
-                to = function() return false end
+                module = "redis.lua",
+                target = "connect",
+                replacer = function() 
+                    print("failured")
+                    return false 
+                end
+                
             }
         }
     },
     redis_existing_connection_success = {
-        description = "connecton successed",
+        description = "emulates connecton successed",
         testedModule = "redisClient.lua",
         testedFunction = "getConn",
         expectedResult = true,
@@ -23,9 +28,13 @@ return {
             internalLogging = true,
         },
         mocks = {
-            { 
-                what = {"_G","redis","connect"},
-                to = function() return true end
+            {
+                module = "redis.lua",
+                target = "connect",
+                replacer = function() 
+                    print("success")
+                    return true 
+                end
             }
         }
     }

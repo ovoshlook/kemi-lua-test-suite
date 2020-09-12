@@ -22,24 +22,7 @@ local testDefaults = {
     algo = testAlgorithms.same
 }
 
---[[ 
-initial Mock start to initialize environment
-
-param tests - path to tests relatively depended of root kamailio.lua file lays
-param modules is a table contains modules if they are  included as local
-example:
-
-local mymodule1 = require("mymodule")
-...
-testSuite.init("tests.init",
-    {
-        mymodule1 = mymodule1
-        mymodule2 = mymodule2
-    }
-)
-]]
-
-function splitStr (inputstr, sep)
+function kemi_test_split_string (inputstr, sep)
     if sep == nil then
             sep = "%s"
     end
@@ -50,73 +33,100 @@ function splitStr (inputstr, sep)
     return t
 end
 
-function printTable(t) 
+function kemi_test_print_table(t) 
     for k,v in pairs(t) do
-        print("key: "..k.." value: "..tostring(v))
-        if type(v)=="table" then printTable(v) end
+        print("key: "..k.."->value: "..tostring(v))
+        if type(v)=="table" then kemi_test_print_table(v) end
     end
 end
 
-local function defineMocs(mocks)
+local function replaceLuaNotation(base,path,level,target,replacer)
+    
+    if not base[path[level]] then
+       -- print(colors("%{magenta}"..path[level].."%{reset} not exists in %{bright blue}_G%{reset}, creating it..."))
+        base[path[level]] = {}
+    end
+    if level < #path then
+        return replaceLuaNotation(base[path[level]],path,level+1,target,replacer)
+    end
+
+    local saved
+    if base[path[level]][target] then
+        saved = base[path[level]][target] 
+    else 
+        base[path[level]][target] = nil
+        saved = base[path[level]][target]
+    end
+    base[path[level]][target] = replacer
+    return saved
+    
+end
+
+local function replaceFSNotation(base,path,target,replacer)
+    local saved 
+    if not base[path] then
+        --print(colors("%{magenta}"..path.."%{reset} not exists in %{bright blue}package.loaded%{reset}, creating it..."))
+        base[path] = {}
+    end
+    if base[path][target] then
+        saved = base[path][target]
+    end
+    base[path][target] = replacer
+    return saved
+end
+
+local function replaceModule(path,target,replacer)
+    
+    --try to remove *.lua extention
+    local moduleName = string.match(path,("([%w_%/]+)%.lua"))
+    
+    if not moduleName then
+        -- if no extention then moduleName the same with path
+        moduleName = path
+    end
+
+    -- convert possible a/b/c to a.b.c
+    moduleName = string.gsub(moduleName,"%/",".")
+
+    -- splitting path to array
+    local moduleNameByPeaces = kemi_test_split_string(moduleName,".")
+    local savedLuaNotation = replaceLuaNotation(_G,moduleNameByPeaces,1,target,replacer.luaNotation)
+    local savedFSNotation = replaceFSNotation(package.loaded,moduleName,target,replacer.FSNotation)
+
+    return {
+        luaNotation = savedLuaNotation,
+        FSNotation = savedFSNotation
+    }
+    
+end
+
+local mocking = {
+    
+    define = function (mocks)
   
-    if not mocks then return nil end
-    local mocked = {}
-    for i=1,#mocks do
-       
-        local key = mocks[i].what[1] 
-        local module = mocks[i].what[2]
-        local target = mocks[i].what[3]
+        if not mocks then return nil end
+        local mocked = {}
+        for i=1,#mocks do
+            local module = mocks[i].module
+            local target = mocks[i].target
+            local replacer = mocks[i].replacer
+            print(colors("%{bright white}Mocking %{reset}%{magenta}\""..module..".%{yellow}"..target.."\"..."))
+            local original = replaceModule(module,target,{ luaNotation = replacer, FSNotation = replacer })
+            table.insert(mocked,{module = module, target = target, original = original })
+                
+        end
 
-        if key == "_G" then
-            if not _G[module] then
-                print(colors("%{bright yellow}No \""..key.."."..module.."."..target.."\" found. Creating it insead of mocking.."))
-                package.loaded[module] = {
-                    [target] = mocks[i].to
-                }
-                table.insert(mocked,{key = key, module = module, target = target })
-            else  
-                if _G[module] then
-                    package.loaded[module][target] = mocks[i].to
-                end
-                table.insert(mocked,{key = key, module = module, target = target, func = _G[module][target] })
-            end
-
-        else
-            if not _G[key] or not _G[key][module] then
-
-                print(colors("%{bright yellow}No \""..key.."."..module.."."..target.."\" found. Creating it insead of mocking.."))
-                if _G[key] then
-                    _G[key][module]={}
-                else 
-                    _G[key] = {
-                        [module]={}
-                    }
-                end
-                table.insert(mocked,{key = key, module = module, target = target })
-            else  
-                table.insert(mocked,{key = key, module = module, target = target, func = _G[key][module][target] })
-            end
-            _G[key][module][target] = mocks[i].to
+        return mocked
+    end,
+    restore = function (mocked)
+    
+        if not mocked then return end
+        for i=1,#mocked do
+            replaceModule(mocked[i].module,mocked[i].target,mocked[i].original)
         end
     end
 
-    return mocked
-
-end
-
-local function undefineMocs(mocked)
-    if not mocked then return end
-    for i=1,#mocked do
-        local key = mocked[i].key 
-        local module = mocked[i].module
-        local target = mocked[i].target
-        if key == "_G" then
-            package.loaded[module] = nil
-        else
-            _G[key][module][target] = mocked[i].func
-        end
-    end
-end
+}
 
 local function testedFunctionInit(testedModule,testedFunction)
     if not testedModule then
@@ -243,16 +253,13 @@ function test(testName,testScenario)
             
     local params    = testScenario.withParams or {}
     local mocks     = testScenario.mocks
-
+    
     Logging = testMock.init(params)
-
-    local mocked = defineMocs(mocks)
-
+    local mocked = mocking.define(mocks)
     if Logging then
         print(colors("%{bright white}Test %{bright blue}\""..testName.."\" %{bright white}output:"))
         print(colors("%{bright blue}-------------------------------------------------------- "))
     end
-
     testScenario.testedFunction = testedFunctionInit(testScenario.testedModule,testScenario.testedFunction)
     local checkRes,testRes = scenarios[testScenario.algorithm](testScenario)
     if Logging then
@@ -260,7 +267,7 @@ function test(testName,testScenario)
     end
     print()
 
-    undefineMocs(mocked)
+    mocking.restore(mocked)
 
     return checkRes,testRes
 

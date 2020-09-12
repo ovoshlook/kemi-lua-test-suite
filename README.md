@@ -69,11 +69,19 @@ return {
             ft = "testtag",
             ru = "callee@foo",
             cs = 1,
-            mocks = {                               -- Allows to redefine some functions that has been added int _G
-                                                    -- Or not exists here. For example - rewriting of some KSR functions
+            mocks = {                               -- Allows to redefine or define  behaviour of some functions
+                                                    -- or just define it for the test if it not exists at all
+                                                    -- it will be restored to original state after particular test runs
+                                        
                 {
-                    what = { "KSR","dispatcher","ds_select_dst" },
-                    to = function() return a end
+                    module = "KSR.dispatcher",
+                    target = "ds_select_dst",
+                    replacer = function() return a end
+                },
+                {
+                    module = "my/path/to/submodule.lua",
+                    target = "myFunc",
+                    replacer = function() return b end
                 }
             }
         },
@@ -96,5 +104,16 @@ ksr_request_route()
     end
 
     KSR.registrar.save(location,URI)
+end
+```
+
+## Contributing or adding your own mocks for modules
+- kemi-test-suite contains mocks, which contains modules. When you going to add new module - check dock of this module at the in the `https://kamailio.org/docs/modules/5.!!!**X**!!!.x/modules/` to understand parameters for this particular function. 
+- if function of the module has required parameters: use `KAMAILIO_CRASH_CHECK(debug.getinfo(1),numOfParams,param1,param2)`. It will protect from the call of the function without required params, because it will crash kamailio during real runtime. Call of this function and will stop testing with the notification about it.
+example **http_async_client.query** mock:
+```lua
+    local function query(query,callbackName) 
+    KAMAILIO_CRASH_CHECK(debug.getinfo(1),2,query,callbackName)
+    return 1
 end
 ```
