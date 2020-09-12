@@ -43,10 +43,9 @@ end
 local function replaceLuaNotation(base,path,level,target,replacer)
     
     if not base[path[level]] then
-        print(colors("%{magenta}"..path[level].."%{reset} not exists in %{bright blue}_G%{reset}, creating it..."))
+       -- print(colors("%{magenta}"..path[level].."%{reset} not exists in %{bright blue}_G%{reset}, creating it..."))
         base[path[level]] = {}
     end
-
     if level < #path then
         return replaceLuaNotation(base[path[level]],path,level+1,target,replacer)
     end
@@ -66,7 +65,7 @@ end
 local function replaceFSNotation(base,path,target,replacer)
     local saved 
     if not base[path] then
-        print(colors("%{magenta}"..path.."%{reset} not exists in %{bright blue}package.loaded%{reset}, creating it..."))
+        --print(colors("%{magenta}"..path.."%{reset} not exists in %{bright blue}package.loaded%{reset}, creating it..."))
         base[path] = {}
     end
     if base[path][target] then
@@ -91,7 +90,6 @@ local function replaceModule(path,target,replacer)
 
     -- splitting path to array
     local moduleNameByPeaces = kemi_test_split_string(moduleName,".")
-    
     local savedLuaNotation = replaceLuaNotation(_G,moduleNameByPeaces,1,target,replacer.luaNotation)
     local savedFSNotation = replaceFSNotation(package.loaded,moduleName,target,replacer.FSNotation)
 
@@ -112,7 +110,6 @@ local mocking = {
             local module = mocks[i].module
             local target = mocks[i].target
             local replacer = mocks[i].replacer
-        
             print(colors("%{bright white}Mocking %{reset}%{magenta}\""..module..".%{yellow}"..target.."\"..."))
             local original = replaceModule(module,target,{ luaNotation = replacer, FSNotation = replacer })
             table.insert(mocked,{module = module, target = target, original = original })
@@ -256,15 +253,13 @@ function test(testName,testScenario)
             
     local params    = testScenario.withParams or {}
     local mocks     = testScenario.mocks
-
+    
     Logging = testMock.init(params)
-
     local mocked = mocking.define(mocks)
     if Logging then
         print(colors("%{bright white}Test %{bright blue}\""..testName.."\" %{bright white}output:"))
         print(colors("%{bright blue}-------------------------------------------------------- "))
     end
-
     testScenario.testedFunction = testedFunctionInit(testScenario.testedModule,testScenario.testedFunction)
     local checkRes,testRes = scenarios[testScenario.algorithm](testScenario)
     if Logging then

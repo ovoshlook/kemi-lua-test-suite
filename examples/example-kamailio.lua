@@ -2,6 +2,7 @@
 
 local testSuite = require "kemi-test-suite.init"
 local mymodule = require "mymodule"
+local nestedTest = require "nested.subnested.test"
 
 function ksr_request_route () 
     local si = KSR.pv.get("$si")
@@ -12,8 +13,8 @@ function ksr_request_route ()
     KSR.info(tostring(replyCode)..": "..tostring(body))
 end
 
-testSuite.run(
-    { 
-        mymodule=mymodule
-    }
-)
+function global_test_route ()
+    nestedTest.testFunc()
+end
+
+testSuite.run()
