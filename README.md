@@ -29,8 +29,6 @@ testMySuperFunc = {
     testedFunction = "mySuperFunc"
 }
 ```
-
-## Usage
 The main trigger which says to call testSuite or not is an environment variable `KAMAILIO_TESTSUITE_LUA`
 It must to be defined in whatever environment testSuite will run
 The simplest way to run it
@@ -112,7 +110,7 @@ end
 - if function of the module has required parameters: use `KAMAILIO_CRASH_CHECK(debug.getinfo(1),numOfParams,param1,param2)`. It will protect from the call of the function without required params, because it will crash kamailio during real runtime. Call of this function and will stop testing with the notification about it.
 example **http_async_client.query** mock:
 ```lua
-    local function query(query,callbackName) 
+local function query(query,callbackName) 
     KAMAILIO_CRASH_CHECK(debug.getinfo(1),2,query,callbackName)
     return 1
 end
