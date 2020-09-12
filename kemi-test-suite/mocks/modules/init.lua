@@ -9,6 +9,7 @@ local testMockModules = {
     siputils            = require "mocks.modules.siputils",
     permissions         = require "mocks.modules.permissions",
     hdr                 = require "mocks.modules.hdr",
+    http_client         = require "mocks.modules.http_client",
     http_async_client   = require "mocks.modules.http_async_client"
 }
 

@@ -11,8 +11,9 @@ return {
         },
         mocks = {
             {
-                what = { "KSR","http_client","query" },
-                to = function(url,res) 
+                module = "KSR.http_client",
+                target = "query" ,
+                replacer = function(url,res) 
                     KSR.pv.seti("$rc",200) 
                     KSR.pv.sets(res,"test message")
                 end
