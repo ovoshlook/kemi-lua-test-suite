@@ -1,8 +1,10 @@
 TEST = true
 
-for i=1,#arg do
-    if arg[i] == "--stop-on-fail" then
-        STOP_ON_FAIL = true
+if arg then
+    for i=1,#arg do
+        if arg[i] == "--stop-on-fail" then
+            STOP_ON_FAIL = true
+        end
     end
 end
 
