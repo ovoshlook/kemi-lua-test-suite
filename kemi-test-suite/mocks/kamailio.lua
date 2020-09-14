@@ -28,6 +28,17 @@ end
 
 local defaults = require("kemi-test-suite.mocks.variables")
 
+local mockModules = {}
+local moduleFiles = io.popen('ls -a "'..string.gsub(pathToModules,"%.","/")..'"*.lua')
+
+for module in moduleFiles:lines() do
+    local moduleName = string.match(module,"/([%w_-]+)%.lua")
+    print(colors("Module found: %{blue}"..module.."%{reset} as %{bright magenta}"..moduleName))
+    mockModules[moduleName] = require (pathToModules.."."..moduleName)
+end
+
+moduleFiles:close()
+
 local function init(testData,mocks)
     
     variables = defaults(testData)
@@ -48,94 +59,26 @@ local function init(testData,mocks)
         return true
     end
 
+    local is_method_in = function(str)
+        KAMAILIO_CRASH_CHECK(debug.getinfo(1),1,str)
+        local method = variables["$rm"]
+        for i = 1, #str do
+            local c = str:sub(i,i)
+            if str[i] == method[1] then
+                return true
+            end
+        end
+        return false
+    end
+
     local forward = function ()
         return
     end
 
     local x = {
         exit = function()
+            --@TODO: os.exit is bad solution, replace with something that not destroys script
             os.exit()
-        end
-    }
-
-    local maxfwd = {
-        process_maxfwd = function(limit)
-            KAMAILIO_CRASH_CHECK(debug.getinfo(1),1,limit)
-            local f = testData.forwards or 4
-            if f > limit then
-                return -1
-            end
-            return 1
-        end
-    }
-
-    local sanity = {
-        sanity_check = function(flag1, flag2)
-            -- implement logic for flags if need to test
-            return 1
-        end
-    }
-
-    local textops = {
-        remove_hf_re = function(regex)
-            KAMAILIO_CRASH_CHECK(debug.getinfo(1),1,regex)
-            -- implement logic to remove header in headers array
-            return
-        end
-    }
-
-    local textopsx = {
-        msg_apply_changes = function()
-            return
-        end
-    }
-
-    local dialplan = {
-        dp_replace = function( tag,dataToReplace,varToPutNewData )
-            KAMAILIO_CRASH_CHECK(debug.getinfo(1),3,tag,dataToReplace,varToPutNewData)
-            variables["$avp"]["s:dest"]  = testData.callDirection or "INBOUND"
-            variables["$ru"] = testData.callDestination or "999999999@3.3.3.3:5070"
-            variables["$avp"]["newDest"] = testData.callDestination  or "999999999@3.3.3.3:5070"
-            --print(JSON.encode(variables["$avp"]))
-        end
-    }
-
-    local statsd = {
-        statsd_incr = function()
-            return
-        end,
-        statsd_decr = function()
-            return
-        end
-    }
-
-    local sl = {
-        send_reply = function(code,reason)
-            KAMAILIO_CRASH_CHECK(debug.getinfo(1),2,code,reason)
-            return
-        end
-    }
-
-    local sdpops = {
-        sdp_content = function()
-            if not variables["$rb"] then
-                return -1
-            end
-            return 1
-        end
-    }
-
-    local sqlops = {
-        sql_xquery = function(conn,query,res)
-            KAMAILIO_CRASH_CHECK(debug.getinfo(1),3,conn,query,res)
-            return
-        end
-    }
-
-    local xhttp = {
-        xhttp_reply = function (code, reason, type, data) 
-            KAMAILIO_CRASH_CHECK(debug.getinfo(1),4,code, reason, type, data)
-            return
         end
     }
 
@@ -146,7 +89,7 @@ local function init(testData,mocks)
     end
 
     --  >= 5.0
-    package.loaded["KSR"] = {
+    local modules = {
         log         = printLog,
         info        = printLog,
         dbg         = printLog,
@@ -156,50 +99,16 @@ local function init(testData,mocks)
         force_rport = force_rport,
         isdsturiset = isdsturiset,
         forward     = forward,
-        x           = x,
-        pv          = require (pathToModules.."pv"),
-        maxfwd      = maxfwd,
-        sanity      = sanity,
-        siputils    = siputils,
-        isdsturiset = isdsturiset,
-        dialplan    = dialplan,
-        permissions = require (pathToModules.."permissions"),
-        jsonrpcs    = require (pathToModules.."jsonrpcs"),
-        nathelper   = require (pathToModules.."nathelper"),
-        statsd      = statsd,
-        hdr         = require (pathToModules.."hdr"),
-        sl          = sl,
-        sdpops      = sdpops,
-        rtpengine   = require (pathToModules.."rtpengine"),
-        textops     = textops,
-        textopsx    = textopsx,
-        sqlops      = sqlops,
-        xhttp       = xhttp,
-        registrar   = require (pathToModules.."registrar"),
-        tcpops      = require (pathToModules.."tcpops"),
-        http_client = require (pathToModules.."http_client")
+        x           = x
     }
+
+    for k,v in pairs(mockModules) do
+        modules[k] = v
+    end
+
+    package.loaded["KSR"] = modules
+
     _G["KSR"] = package.loaded["KSR"]
-    --  <= 4.4
-    package.loaded["sr"] = {
-        log         = printLog,
-        info        = printLog,
-        warn        = printLog,
-        dbg         = printLog,
-        err         = printLog,
-        changed     = changed,
-        force_rport = force_rport,
-        isdsturiset = isdsturiset,
-        forward     = forward,
-        x           = x,
-        pv          = require (pathToModules.."pv"),
-        maxfwd      = maxfwd,
-        sanity      = sanity,
-        siputils    = siputils,
-        isdsturiset = isdsturiset,
-        registrar    = require (pathToModules.."registrar")
-    }
-    _G["sr"] = package.loaded["sr"]
     
     return internalLogging
 end

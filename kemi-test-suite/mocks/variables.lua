@@ -26,6 +26,7 @@ return function(testData)
         ["$ft"] = testData.ft,
         ["$tt"] = testData.tt,
         ["$hu"] = testData.hu,
+        ["$ua"] = testData.ua,
         ["$http_rb"] = testData.http_rb,
         ["$TV"] = {
             un = testData.TV or "1234567890.12345",
