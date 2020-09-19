@@ -24,7 +24,7 @@ local testDefaults = {
     algo = testAlgorithms.same
 }
 
-local function splitString(inputstr, sep)
+function kemi_test_split_string (inputstr, sep)
     if sep == nil then
             sep = "%s"
     end
@@ -111,7 +111,7 @@ local function replaceModule(path,target,replacer)
     moduleName = string.gsub(moduleName,"%/",".")
 
     -- splitting path to array
-    local moduleNameByPeaces = splitString(moduleName,".")
+    local moduleNameByPeaces = kemi_test_split_string(moduleName,".")
     local savedLuaNotation = replaceLuaNotation(_G,moduleNameByPeaces,1,target,replacer.luaNotation)
     local savedFSNotation = replaceFSNotation(package.loaded,moduleName,target,replacer.FSNotation)
 
