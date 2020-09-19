@@ -36,7 +36,6 @@ local defaults = require("kemi-test-suite.mocks.variables")
 
 local mockModules = require("kemi-test-suite.mocks.modules.init")
 
-
 local function init(testData,mocks)
    
     variables = defaults(testData)
