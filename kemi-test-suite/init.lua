@@ -154,6 +154,7 @@ local function testedFunctionInit(testedModule,testedFunction)
     if not testedModule then
         return _G[testedFunction]
     elseif not package.loaded[testedModule] then
+        print(testedModule)
         local m = loadfile(testedModule)
         return m()[testedFunction]
     end

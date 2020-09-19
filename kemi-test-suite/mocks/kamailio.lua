@@ -1,12 +1,7 @@
 local json = require "cjson.safe"
 local colors = require "kemi-test-suite.colors"
 
--- Activation function to emulate KSR engine of kamailio
--- returns predefined default values of the KSR functions and modules for tests
--- "testData" param used to get test predefined vaules, if no predefined - default vaules will be used
-
 local internalLogging = false
-local pathToModules = "kemi-test-suite/mocks/modules"
 
 local function splitString (inputstr, sep)
     if sep == nil then
@@ -39,35 +34,11 @@ end
 
 local defaults = require("kemi-test-suite.mocks.variables")
 
-local mockModules = {}
--- print("lua path: "..package.path)
--- local moduleFiles = io.popen('ls -a "'..string.gsub(pathToModules,"%.","/")..'"*.lua')
-
-local myPath = debug.getinfo(1).source:match("@?(.*/)")
-
-if not string.match(package.path, myPath) then
-    package.path = myPath .. '?.lua;' .. package.path
-end
-
-local pathTable = splitString(package.path,";")
-
-for i in ipairs(pathTable) do
-    local path = string.gsub(pathTable[i],"[%.]*/%?[/]*[init]*%.lua","")
-    local ok, err, code = os.rename(path..pathToModules, path..pathToModules)
-    if ok then 
-        local moduleFiles = io.popen('ls -a "'..string.gsub(path..pathToModules,"%.","/")..'"/*.lua')
-        for module in moduleFiles:lines() do
-            local moduleName = string.match(module,"/([%w_-]+)%.lua")
-            print(colors("Module found: %{blue}"..module.."%{reset} as %{bright magenta}"..moduleName))
-            mockModules[moduleName] = require (string.gsub(pathToModules,"/",".").."."..moduleName)
-        end
-        moduleFiles:close()
-    end
-end
+local mockModules = require("kemi-test-suite.mocks.modules.init")
 
 
 local function init(testData,mocks)
-    
+   
     variables = defaults(testData)
     
     -- changed variables that should be affected AFTER all packet handing script done
