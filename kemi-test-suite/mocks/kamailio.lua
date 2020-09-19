@@ -6,18 +6,7 @@ local colors = require "kemi-test-suite.colors"
 -- "testData" param used to get test predefined vaules, if no predefined - default vaules will be used
 
 local internalLogging = false
-local pathToModules = "kemi-test-suite/mocks/modules"
-
-local function splitString (inputstr, sep)
-    if sep == nil then
-        sep = "%s"
-    end
-    local t={}
-    for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
-        table.insert(t, str)
-    end
-    return t
-end
+local pathToModules = "kemi-test-suite.mocks.modules."
 
 function KAMAILIO_CRASH_CHECK(...) 
     if not arg[1] and not arg[2] then
@@ -40,31 +29,15 @@ end
 local defaults = require("kemi-test-suite.mocks.variables")
 
 local mockModules = {}
--- print("lua path: "..package.path)
--- local moduleFiles = io.popen('ls -a "'..string.gsub(pathToModules,"%.","/")..'"*.lua')
+local moduleFiles = io.popen('ls -a "'..string.gsub(pathToModules,"%.","/")..'"*.lua')
 
-local myPath = debug.getinfo(1).source:match("@?(.*/)")
-
-if not string.match(package.path, myPath) then
-    package.path = myPath .. '?.lua;' .. package.path
+for module in moduleFiles:lines() do
+    local moduleName = string.match(module,"/([%w_-]+)%.lua")
+    print(colors("Module found: %{blue}"..module.."%{reset} as %{bright magenta}"..moduleName))
+    mockModules[moduleName] = require (pathToModules.."."..moduleName)
 end
 
-local pathTable = splitString(package.path,";")
-
-for i in ipairs(pathTable) do
-    local path = string.gsub(pathTable[i],"[%.]*/%?[/]*[init]*%.lua","")
-    local ok, err, code = os.rename(path..pathToModules, path..pathToModules)
-    if ok then 
-        local moduleFiles = io.popen('ls -a "'..string.gsub(path..pathToModules,"%.","/")..'"/*.lua')
-        for module in moduleFiles:lines() do
-            local moduleName = string.match(module,"/([%w_-]+)%.lua")
-            print(colors("Module found: %{blue}"..module.."%{reset} as %{bright magenta}"..moduleName))
-            mockModules[moduleName] = require (string.gsub(pathToModules,"/",".").."."..moduleName)
-        end
-        moduleFiles:close()
-    end
-end
-
+moduleFiles:close()
 
 local function init(testData,mocks)
     
