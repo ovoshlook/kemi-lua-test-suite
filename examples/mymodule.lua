@@ -4,7 +4,7 @@ end
 
 local  function testfunction2() 
     KSR.log("mymodule output testfunction2")
-    return {a=1,b=2}
+    return "bla",{a=1,b=2}
 end
 
 local mymodule = {

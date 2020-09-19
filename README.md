@@ -49,7 +49,9 @@ return {
         testedFunction = "func",                    -- Function being tested. kamailio here is a global         REQUIRED
                                                     -- if function is global like ksr_requrest_route 
                                                     -- no testedModule param needed.
-        expectedResult = "a",                       -- Expected result of tested function
+        expectedResult = "a",                       -- Expected result of tested function,
+                                                    -- if tested function returns more than 1 result then expectedResult has to be a table. 
+                                                    -- example of multiple vaules expected: { "bla", {a=1,b=2} }
         resultContainer = { "$avp", "result" },     -- If function puts some value into the vp result 
                                                     -- container describes for testSuite where to find 
                                                     -- the result

@@ -13,7 +13,10 @@ local mymodule = {
         description = "returns table value",
         testedModule = "mymodule.lua",
         testedFunction = "testfunction2",
-        expectedResult = { a=1, b=2 }  
+        expectedResult = { "bla", { b=2, a=1 }}, 
+        withParams = {
+            internalLogging = true
+        }
     },
 }
 

@@ -42,6 +42,26 @@ function kemi_test_print_table(t)
     end
 end
 
+local function compareTables(t1,t2,ignore_mt)
+    local ty1 = type(t1)
+    local ty2 = type(t2)
+    if ty1 ~= ty2 then return false end
+    -- non-table types can be directly compared
+    if ty1 ~= 'table' and ty2 ~= 'table' then return t1 == t2 end
+    -- as well as tables which have the metamethod __eq
+    local mt = getmetatable(t1)
+    if not ignore_mt and mt and mt.__eq then return t1 == t2 end
+    for k1,v1 in pairs(t1) do
+       local v2 = t2[k1]
+       if v2 == nil or not compareTables(v1,v2) then return false end
+    end
+    for k2,v2 in pairs(t2) do
+       local v1 = t1[k2]
+       if v1 == nil or not compareTables(v1,v2) then return false end
+    end
+    return true
+ end
+
 local function replaceLuaNotation(base,path,level,target,replacer)
     
     if not base[path[level]] then
@@ -143,7 +163,9 @@ end
 local scenarios = {
 
     same = function(testScenario)
+        
         if testScenario.resultContainer then
+            
             testScenario.testedFunction( unpack(testScenario.testedFunctionArgs) )
             local res = variables
             local c = testScenario.resultContainer
@@ -154,14 +176,34 @@ local scenarios = {
                 return true,res
             end
             return false,res
+
         else
-            local res = testScenario.testedFunction( unpack(testScenario.testedFunctionArgs) )
+
+            local res = { testScenario.testedFunction( unpack(testScenario.testedFunctionArgs) ) }
+            
             if not res and type(testScenario.expectedResult) == "table" then
                 res = {}
             end
-            if (json.encode(testScenario.expectedResult) == json.encode(res)) then
+            
+            local expectedRes = testScenario.expectedResult
+            
+            local comparedRes
+            
+            if type(expectedRes)~="table" then
+                
+                res = res[1]
+                comparedRes = json.encode(res) == json.encode(expectedRes)
+           
+            else 
+                
+                comparedRes = compareTables(expectedRes,res)
+            
+            end
+            
+            if comparedRes then
                 return true,res
             end
+
             return false,res
         end
     end,
@@ -169,7 +211,7 @@ local scenarios = {
     notSame = function(testScenario)
         if testScenario.resultContainer then
 
-            testScenario.testedFunction( unpack(testScenario.testedFunctionParams) )
+            testScenario.testedFunction( unpack(testScenario.testedFunctionArgs) )
             local res = variables
             local c = testScenario.resultContainer
             for i=1,#c do
@@ -182,13 +224,32 @@ local scenarios = {
 
         else
 
-            local res = testScenario.testedFunction( unpack(testScenario.testedFunctionParams))
+            local res = { testScenario.testedFunction( unpack(testScenario.testedFunctionArgs)) }
 
-            if not res then
+            if not res and type(testScenario.expectedResult) == "table" then
                 res = {}
             end
+
+            local expectedRes = testScenario.expectedResult
             
-            if (json.encode(testScenario.expectedResult) == json.encode(res)) then
+            local comparedRes
+            if type(expectedRes)~="table" then
+                
+                res = res[1]
+                comparedRes = json.encode(res) == json.encode(expectedRes)
+           
+            else 
+                
+                expectedRes = { expectedRes }
+                comparedRes = compareTables(expectedRes,res)
+
+                --reverting changes back
+                res = res[1]
+                expectedRes = expectedRes[1]
+            
+            end
+            
+            if comparedRes then
                 return false,res
             end
 
@@ -201,6 +262,8 @@ local scenarios = {
 function beautify(this)
     if this == nil then
         return "nil"
+    elseif this == true then
+        return "true"
     elseif this == false then
         return "false"
     elseif type(this) == "function" then

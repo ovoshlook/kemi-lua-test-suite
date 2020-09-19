@@ -12,7 +12,7 @@ return {
                 module = "redis.lua",
                 target = "connect",
                 replacer = function() 
-                    print("failured")
+                    print("redis mock connection failure result")
                     return false 
                 end
                 
@@ -32,7 +32,7 @@ return {
                 module = "redis.lua",
                 target = "connect",
                 replacer = function() 
-                    print("success")
+                    print("redis mock connection success result")
                     return true 
                 end
             }
