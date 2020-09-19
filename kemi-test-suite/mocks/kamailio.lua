@@ -1,12 +1,18 @@
 local json = require "cjson.safe"
 local colors = require "kemi-test-suite.colors"
 
--- Activation function to emulate KSR engine of kamailio
--- returns predefined default values of the KSR functions and modules for tests
--- "testData" param used to get test predefined vaules, if no predefined - default vaules will be used
-
 local internalLogging = false
-local pathToModules = "kemi-test-suite.mocks.modules."
+
+local function splitString (inputstr, sep)
+    if sep == nil then
+        sep = "%s"
+    end
+    local t={}
+    for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
+        table.insert(t, str)
+    end
+    return t
+end
 
 function KAMAILIO_CRASH_CHECK(...) 
     if not arg[1] and not arg[2] then
@@ -28,19 +34,10 @@ end
 
 local defaults = require("kemi-test-suite.mocks.variables")
 
-local mockModules = {}
-local moduleFiles = io.popen('ls -a "'..string.gsub(pathToModules,"%.","/")..'"*.lua')
-
-for module in moduleFiles:lines() do
-    local moduleName = string.match(module,"/([%w_-]+)%.lua")
-    print(colors("Module found: %{blue}"..module.."%{reset} as %{bright magenta}"..moduleName))
-    mockModules[moduleName] = require (pathToModules.."."..moduleName)
-end
-
-moduleFiles:close()
+local mockModules = require("kemi-test-suite.mocks.modules.init")
 
 local function init(testData,mocks)
-    
+   
     variables = defaults(testData)
     
     -- changed variables that should be affected AFTER all packet handing script done
