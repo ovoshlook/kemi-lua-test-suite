@@ -1,6 +1,8 @@
-nested_module_mocking = {
-    description = "tests nested module replacement",
-    testdedModule = "nested/subnested/test.lua",
-    testedFunction = "testFunc",
-    testedResult = "original nested module test",
+return {
+    nested_module_separate_test_success = {
+        description = "tests nested module separatelly",
+        testedModule = "nested/subnested/test.lua",
+        testedFunction = "testFunc",
+        expectedResult = "original nested module test"
+    }
 }
