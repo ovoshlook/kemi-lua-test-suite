@@ -25,6 +25,9 @@ return {
         description = "tests nested module",
         testedFunction = "global_test_route",
         testedResult = "original nested module test",
+        withParams = {
+            internalLogging = true,
+        },
     },
 
     nested_module_mocking = {
@@ -41,4 +44,14 @@ return {
             }
         }
     }
+
+    ksr_request_route = {
+        description = "tests ksr_request_route ",
+        testedFunction = "ksr_request_route",
+        testedResult = "original nested module test",
+        withParams = {
+            internalLogging = true,
+            forwards = 500
+        },
+    },
 }

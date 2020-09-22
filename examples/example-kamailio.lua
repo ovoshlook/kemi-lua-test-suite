@@ -5,6 +5,9 @@ local mymodule = require "mymodule"
 local nestedTest = require "nested.subnested.test"
 
 function ksr_request_route () 
+    if KSR.maxfwd.process_maxfwd(10) < 0 then
+        KSR.err("maxfwd")
+    end
     local si = KSR.pv.get("$si")
     KSR.info("test running: "..si)
     KSR.http_client.query("http://localhost","$avp(body)")

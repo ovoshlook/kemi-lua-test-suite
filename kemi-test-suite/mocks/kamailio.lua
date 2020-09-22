@@ -40,6 +40,12 @@ local function init(testData,mocks)
    
     variables = defaults(testData)
     
+    -- fill user defined variables that not in a list
+    for k,v in pairs(testData) do
+        if not variables[k] then
+            variables[k] = v
+        end
+    end
     -- changed variables that should be affected AFTER all packet handing script done
     local changed = {}
 

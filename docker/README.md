@@ -4,4 +4,4 @@ Build:
 `docker build -t lua-kamailio-test -f ./Dockerfile.testSuite .`
 
 Run
-`sudo docker run -it -v $(pwd)/examples:/tests lua-kamailio-test:latest lua example-kamailio.lua`
+`sudo docker run -it -v $(pwd)/examples:/tests lua-kamailio-test:latest lua /tests/example-kamailio.lua`
