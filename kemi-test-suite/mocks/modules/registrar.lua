@@ -1,27 +1,22 @@
 
 local function save(where,how)
-    if not (where or how) then
-        return -1
-    end
+    KAMAILIO_CRASH_CHECK(debug.getinfo(1),2,where,how)
     return 1
 end
 
 local function save_uri(where,how,what)
-    if not (where or how or what) then
-        return -1
-    end
+    KAMAILIO_CRASH_CHECK(debug.getinfo(1),3,where,how,what)
     return 1
 end
 
 local function registered_action(where,what,how) 
-    if not (where or how or what) then
-        return false
-    end
-    return true
+    KAMAILIO_CRASH_CHECK(debug.getinfo(1),3,where,how,what)
+    return 1
 end 
 
 local function unregister(where,what) 
-    return true
+    KAMAILIO_CRASH_CHECK(debug.getinfo(1),2,where,what)
+    return t1
 end 
 
 local registrar = {

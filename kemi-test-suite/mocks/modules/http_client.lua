@@ -1,7 +1,5 @@
 local function query(url,res)
-    if not (url or res) then
-        return -1
-    end
+    KAMAILIO_CRASH_CHECK(debug.getinfo(1),2,url,res)
     return 1
 end
 

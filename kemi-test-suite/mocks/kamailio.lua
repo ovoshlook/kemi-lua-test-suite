@@ -1,12 +1,18 @@
 local json = require "cjson.safe"
 local colors = require "kemi-test-suite.colors"
 
--- Activation function to emulate KSR engine of kamailio
--- returns predefined default values of the KSR functions and modules for tests
--- "testData" param used to get test predefined vaules, if no predefined - default vaules will be used
-
 local internalLogging = false
-local pathToModules = "kemi-test-suite.mocks.modules."
+
+local function splitString (inputstr, sep)
+    if sep == nil then
+        sep = "%s"
+    end
+    local t={}
+    for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
+        table.insert(t, str)
+    end
+    return t
+end
 
 function KAMAILIO_CRASH_CHECK(...) 
     if not arg[1] and not arg[2] then
@@ -26,23 +32,41 @@ function KAMAILIO_CRASH_CHECK(...)
     end
 end
 
+local METHODS = {
+    "INVITE",
+    "PRACK",
+    "ACK",
+    "BYE",
+    "UPDATE",
+    "CANCEL",
+    "REFER",
+    "MESSAGE",
+    "PUBLISH",
+    "NOTIFY",
+    "SUBSCRIBE",
+    "REGISTER",
+    "OPTIONS",
+    "INFO",
+    "GET",
+    "POST",
+    "PUT",
+    "DELETE"
+}
+
 local defaults = require("kemi-test-suite.mocks.variables")
 
-local mockModules = {}
-local moduleFiles = io.popen('ls -a "'..string.gsub(pathToModules,"%.","/")..'"*.lua')
-
-for module in moduleFiles:lines() do
-    local moduleName = string.match(module,"/([%w_-]+)%.lua")
-    print(colors("Module found: %{blue}"..module.."%{reset} as %{bright magenta}"..moduleName))
-    mockModules[moduleName] = require (pathToModules.."."..moduleName)
-end
-
-moduleFiles:close()
+local mockModules = require("kemi-test-suite.mocks.modules.init")
 
 local function init(testData,mocks)
-    
+   
     variables = defaults(testData)
     
+    -- fill user defined variables that not in a list
+    for k,v in pairs(testData) do
+        if not variables[k] then
+            variables[k] = v
+        end
+    end
     -- changed variables that should be affected AFTER all packet handing script done
     local changed = {}
 
@@ -88,19 +112,30 @@ local function init(testData,mocks)
         end
     end
 
+
     --  >= 5.0
     local modules = {
-        log         = printLog,
-        info        = printLog,
-        dbg         = printLog,
-        warn        = printLog,
-        err         = printLog,
-        changed     = changed,
-        force_rport = force_rport,
-        isdsturiset = isdsturiset,
-        forward     = forward,
-        x           = x
+        log             = printLog,
+        info            = printLog,
+        dbg             = printLog,
+        warn            = printLog,
+        err             = printLog,
+        changed         = changed,
+        force_rport     = force_rport,
+        isdsturiset     = isdsturiset,
+        is_method_in    = is_method_in,    
+        forward         = forward,
+        x               = x
     }
+
+    for i=1,#METHODS do
+        modules["is_"..METHODS[i]] = function() 
+            if variables["$rm"] == METHODS[i] then
+                return true
+            end
+            return false
+        end
+    end
 
     for k,v in pairs(mockModules) do
         modules[k] = v

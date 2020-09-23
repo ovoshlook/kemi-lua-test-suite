@@ -1,5 +1,6 @@
 return {
     allow_source_address = function( group )
+        KAMAILIO_CRASH_CHECK(debug.getinfo(1),1,group)
         local map = testData.allowedAddressMap or {
             ["1"] = { "1.1.1.1" }
         }

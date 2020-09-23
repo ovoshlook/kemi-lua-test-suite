@@ -154,7 +154,13 @@ local function testedFunctionInit(testedModule,testedFunction)
     if not testedModule then
         return _G[testedFunction]
     elseif not package.loaded[testedModule] then
+        -- print(testedModule)
         local m = loadfile(testedModule)
+        if not m then
+            print(colors("%{bright red}\nCan't find testedModule:%{magenta} \""..testedModule.."\"%{bright red} !!!\nCheck path and name in test description.\n"))
+            os.exit()
+        end
+        --assert(m()[testedFunction],colors("%{bright red}\nCan't find testedFunction: %{reset} \""..testedModule.."\".%{bright red} Check path and name\n"))
         return m()[testedFunction]
     end
     return package.loaded[testedModule][testedFunction]
