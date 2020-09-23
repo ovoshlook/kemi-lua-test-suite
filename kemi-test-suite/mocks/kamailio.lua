@@ -115,16 +115,17 @@ local function init(testData,mocks)
 
     --  >= 5.0
     local modules = {
-        log         = printLog,
-        info        = printLog,
-        dbg         = printLog,
-        warn        = printLog,
-        err         = printLog,
-        changed     = changed,
-        force_rport = force_rport,
-        isdsturiset = isdsturiset,
-        forward     = forward,
-        x           = x
+        log             = printLog,
+        info            = printLog,
+        dbg             = printLog,
+        warn            = printLog,
+        err             = printLog,
+        changed         = changed,
+        force_rport     = force_rport,
+        isdsturiset     = isdsturiset,
+        is_method_in    = is_method_in,    
+        forward         = forward,
+        x               = x
     }
 
     for i=1,#METHODS do
