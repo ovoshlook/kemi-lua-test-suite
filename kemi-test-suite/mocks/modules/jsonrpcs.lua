@@ -6,10 +6,10 @@ local jsonrpcs = {
         local api = {
             ["dispatcher.add"] = function(params) 
                 if not params or not (params[1] and params[2]) then
-                    variables["$jsonrpl"]["body"]=JSON.encode('jsonrpc":"2.0","error":{"code":500,"message":"Invalid Parameters"}')
+                    variables["$jsonrpl"]["body"]=JSON.encode({"jsonrpc"="2.0","error" = {"code" = 500,"message" = "Invalid Parameters"}})
                     return
                 end
-                variables["$jsonrpl"]["body"]=JSON.encode('jsonrpc":"2.0","result":{}')
+                variables["$jsonrpl"]["body"]=JSON.encode({"jsonrpc"="2.0","result" = {}})
             end,
 
             ["dispatcher.list"] = function(params)
