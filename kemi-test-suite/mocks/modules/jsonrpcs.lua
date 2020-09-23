@@ -2,8 +2,8 @@ local JSON = require "cjson.safe"
 
 local jsonrpcs = {
     exec = function(jsonedRequest)
+        KAMAILIO_CRASH_CHECK(debug.getinfo(1),1,jsonedRequest)
         local api = {
-            
             ["dispatcher.add"] = function(params) 
                 if not params or not (params[1] and params[2]) then
                     variables["$jsonrpl"]["body"]=JSON.encode('jsonrpc":"2.0","error":{"code":500,"message":"Invalid Parameters"}')

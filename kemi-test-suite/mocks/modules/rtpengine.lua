@@ -1,15 +1,18 @@
 local rtpengine = {
     set_rtpengine_set = function (serverId)
+        KAMAILIO_CRASH_CHECK(debug.getinfo(1),1,serverId)
         return
     end,
     rtpengine_offer = function (keys)
+        KAMAILIO_CRASH_CHECK(debug.getinfo(1),1,keys)
         return
     end,
     rtpengine_answer = function (keys)
+        KAMAILIO_CRASH_CHECK(debug.getinfo(1),1,keys)
         return
     end,
     rtpengine_delete = function (keys)
-
+        KAMAILIO_CRASH_CHECK(debug.getinfo(1),1,keys)
         variables["$avp"]["(mosMinTS)"] = "123123123"
         variables["$avp"]["(mosMin)"] = "3"
         variables["$avp"]["(mosMinPL)"] = "14"
@@ -29,6 +32,7 @@ local rtpengine = {
     end,
 
     rtpengine_manage = function (keys)
+        KAMAILIO_CRASH_CHECK(debug.getinfo(1),1,keys)
         return
     end,
 }

@@ -1,5 +1,6 @@
 return {
     nat_uac_test = function(num)
+        KAMAILIO_CRASH_CHECK(debug.getinfo(1),1,num)
         count = 0
          --  only rfc1918. TODO: add rfc6598
         local networks = {
