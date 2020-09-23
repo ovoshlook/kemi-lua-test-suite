@@ -32,6 +32,27 @@ function KAMAILIO_CRASH_CHECK(...)
     end
 end
 
+local METHODS = {
+    "INVITE",
+    "PRACK",
+    "ACK",
+    "BYE",
+    "UPDATE",
+    "CANCEL",
+    "REFER",
+    "MESSAGE",
+    "PUBLISH",
+    "NOTIFY",
+    "SUBSCRIBE",
+    "REGISTER",
+    "OPTIONS",
+    "INFO",
+    "GET",
+    "POST",
+    "PUT",
+    "DELETE"
+}
+
 local defaults = require("kemi-test-suite.mocks.variables")
 
 local mockModules = require("kemi-test-suite.mocks.modules.init")
@@ -91,6 +112,7 @@ local function init(testData,mocks)
         end
     end
 
+
     --  >= 5.0
     local modules = {
         log         = printLog,
@@ -104,6 +126,15 @@ local function init(testData,mocks)
         forward     = forward,
         x           = x
     }
+
+    for i=1,#METHODS do
+        modules["is_"..METHODS[i]] = function() 
+            if variables["$rm"] == METHODS[i] then
+                return true
+            end
+            return false
+        end
+    end
 
     for k,v in pairs(mockModules) do
         modules[k] = v

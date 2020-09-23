@@ -1,6 +1,7 @@
 local myPath = "kemi-test-suite.mocks.modules."
 
 local modules = {
+    "corex",
     "dialplan",
     "hdr",
     "http_async_client",

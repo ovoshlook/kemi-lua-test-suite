@@ -43,15 +43,5 @@ return {
                 end
             }
         }
-    }
-
-    ksr_request_route = {
-        description = "tests ksr_request_route ",
-        testedFunction = "ksr_request_route",
-        testedResult = "original nested module test",
-        withParams = {
-            internalLogging = true,
-            forwards = 500
-        },
     },
 }
