@@ -5,7 +5,7 @@ return {
         testedFunction = "checkOptions",
         expectedResult = true, 
         withParams = {
-            rm = "OPTIONS",
+            ["$rm"] = "OPTIONS",
             internalLogging = true
         }
     },
@@ -15,7 +15,7 @@ return {
         testedFunction = "checkInvite",
         expectedResult = false, 
         withParams = {
-            rm = "OPTIONS",
+            ["$rm"] = "OPTIONS",
             internalLogging = true
         }
     }

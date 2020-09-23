@@ -7,7 +7,7 @@ return {
         resultContainer = { "$avp", "body" },
         withParams = {
             internalLogging = true,
-            si = "1.2.3.4",
+            ["$si"] = "1.2.3.4",
         },
         mocks = {
             {
