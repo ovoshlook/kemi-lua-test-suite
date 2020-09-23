@@ -58,17 +58,21 @@ return {
         algorithm = 'same',                         -- Algo test will be running: same/notSame                  DEFAULT: same
         withParams = {                              -- Params will be passed into mock instead of defaults
             internalLogging = true,                 -- allows to see log messages inside tested functions       DEFAULT: false
-            rm = "INVITE",
-            si = "1.2.3.4",
-            sp = "5060",
-            du = "sip:5.6.7.8:12303",
-            dp = "12303",
-            ct = "123456@1.2.3.4:5060",
-            ci = "44444",
-            fu = "test1@bla",
-            ft = "testtag",
-            ru = "callee@foo",
-            cs = 1,
+            ["$rm"] = "INVITE",
+            ["$si"] = "1.2.3.4",
+            ["$sp"] = "5060",
+            ["$du"] = "sip:5.6.7.8:12303",
+            ["$dp"] = "12303",
+            ["$ct"] = "123456@1.2.3.4:5060",
+            ["$ci"] = "44444",
+            ["$fu"] = "test1@bla",
+            ["$ft"] = "testtag",
+            ["$ru"] = "callee@foo",
+            ["$cs"] = 1,
+            ["$avp"] = {
+                ["my_avp"] = "blabla"
+                }
+            }
             mocks = {                               -- Allows to redefine or define  behaviour of some functions
                                                     -- or just define it for the test if it not exists at all
                                                     -- it will be restored to original state after particular test runs
