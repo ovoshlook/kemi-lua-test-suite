@@ -86,9 +86,11 @@ end
 
 local function getvs(var,default) 
     KAMAILIO_CRASH_CHECK(debug.getinfo(1),2,var,default)
-    if not get(var) then
+    local val = get(var)
+    if not val then
         return default
     end
+    return val
 end
 
 return {
