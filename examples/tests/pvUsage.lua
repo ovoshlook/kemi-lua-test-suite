@@ -9,12 +9,24 @@ return {
             internalLogging = true
         }
     },
-    test_vp_getvs_success = {
+    test_vp_getvs_default_success = {
         description = "sets pv success",
         testedModule = "pvUsage.lua",
         testedFunction = "testFunction2",
         expectedResult = "default string",
         withParams = {
+            internalLogging = true
+        }
+    },
+    test_vp_getvs_exists_success = {
+        description = "sets pv success",
+        testedModule = "pvUsage.lua",
+        testedFunction = "testFunction2",
+        expectedResult = "test var",
+        withParams = {
+            ["$avp"] = {
+                test = "test var"
+            },
             internalLogging = true
         }
     }

@@ -347,6 +347,7 @@ end
 local function run()
     
     if not os.getenv("KAMAILIO_TESTSUITE_LUA") then 
+        TEST = false
         return
     end
     
