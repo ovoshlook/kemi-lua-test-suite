@@ -81,6 +81,7 @@ local function sets (var,val)
         return
     end
 
+    variables[var] = tostring(val)
     return
 end
 

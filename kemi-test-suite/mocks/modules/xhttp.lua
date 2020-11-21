@@ -6,3 +6,5 @@ local xhttp = {
     end
 
 }
+
+return xhttp
