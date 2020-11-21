@@ -96,6 +96,10 @@ local jsonrpcs = {
             end
         }
         local request = JSON.decode(jsonedRequest)
+        if not api[request.method] then
+            variables["$jsonrpl"]["body"] = JSON.encode({error = "Method not found" }})
+            return
+        end
         api[request.method](request.params)
     end
 }
